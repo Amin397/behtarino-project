@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AuthScreen extends StatelessWidget {
-  const AuthScreen({Key? key}) : super(key: key);
+import '../Controller/calendar_controller.dart';
+
+class CalendarScreen extends StatelessWidget {
+  CalendarScreen({Key? key}) : super(key: key);
+  final CalendarController controller = Get.put(CalendarController());
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +16,7 @@ class AuthScreen extends StatelessWidget {
         body: SizedBox(
           height: Get.height,
           width: Get.width,
-          child: Column(
-            children: [
 
-            ],
-          ),
         ),
       ),
     );
