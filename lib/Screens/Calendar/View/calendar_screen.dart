@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_note/Consts/colors.dart';
 import 'package:my_note/Consts/edge_insets.dart';
+import 'package:my_note/Globals/blocs.dart';
+import 'package:my_note/Utils/widget_utils.dart';
+import 'package:shamsi_date/shamsi_date.dart';
 
 import '../Controller/calendar_controller.dart';
 import 'Widgets/clock_part_item.dart';
@@ -22,7 +25,10 @@ class CalendarScreen extends StatelessWidget {
           width: Get.width,
           child: Column(
             children: [
-              _buildAppBar(),
+              WidgetUtils.buildAppBar(
+                text: 'BehtariNote',
+                innerPage: false
+              ),
               SizedBox(
                 height: Get.height * .01,
               ),
@@ -54,31 +60,14 @@ class CalendarScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar() {
-    return Container(
-      height: Get.height * .1,
-      width: Get.width,
-      color: mainColor,
-      padding: paddingSymmetricV16,
-      child: const Align(
-        alignment: Alignment.bottomCenter,
-        child: Text(
-          'BehtariNote',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20.0,
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSingleDay() {
     return SizedBox(
       width: Get.width,
       height: Get.height * .06,
-      child: const Center(
-        child: AutoSizeText('دوشنبه'),
+      child: Center(
+        child: AutoSizeText(
+          Globals.time.format1(),
+        ),
       ),
     );
   }

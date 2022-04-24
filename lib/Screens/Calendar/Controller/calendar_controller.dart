@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_note/Consts/name_routs.dart';
 import 'package:my_note/Globals/blocs.dart';
 
 import '../Model/day_calendar_model.dart';
+import '../View/Widgets/show_add_alarm_alert.dart';
 
 class CalendarController extends GetxController {
   ScrollController? scrollController;
@@ -34,8 +36,6 @@ class CalendarController extends GetxController {
     DayCalendarModel(time: '23:00'),
   ];
 
-
-
   @override
   void onInit() {
     Globals.time.updateTime();
@@ -55,5 +55,38 @@ class CalendarController extends GetxController {
       );
     });
     update();
+  }
+
+  void showAlertForAddAlarm({
+    required DayCalendarModel dayCalendar,
+  }) async {
+    var result = await showDialog(
+      context: Get.context!,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent,
+          contentPadding: EdgeInsets.zero,
+          content: ShowAddAlarmAlert(),
+        );
+      },
+    );
+
+
+    switch(result['id']){
+      case 0:{
+        Get.toNamed(NameRouts.newEvent , arguments: {
+          'item':dayCalendar,
+        });
+        break;
+      }
+      case 1:{
+        print('shadi');
+        break;
+      }
+      default:{
+
+      }
+    }
   }
 }

@@ -17,26 +17,31 @@ class ClockPartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Get.height * .3,
-      width: Get.width,
-      margin: EdgeInsets.only(
-        bottom: 12.0,
-        right: Get.width * .02,
-      ),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 1.5,
+    return GestureDetector(
+      onLongPress: (){
+        controller.showAlertForAddAlarm(dayCalendar:item);
+      },
+      child: Container(
+        height: Get.height * .3,
+        width: Get.width,
+        margin: EdgeInsets.only(
+          bottom: 12.0,
+          right: Get.width * .02,
+        ),
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey,
+              width: 1.5,
+            ),
           ),
         ),
-      ),
-      child: Column(
-        children: [
-          _buildTimePart(),
-          _buildMinuetsPart(),
-        ],
+        child: Column(
+          children: [
+            _buildTimePart(),
+            _buildMinuetsPart(),
+          ],
+        ),
       ),
     );
   }
