@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:my_note/Consts/name_routs.dart';
 import 'package:my_note/Globals/blocs.dart';
@@ -12,6 +13,7 @@ class OtpController extends GetxController {
   RxBool invalidCode = false.obs;
 
   void checkOtp() async {
+    EasyLoading.show();
     ProjectRequests.makePostRequest(
         controller: 'auth',
         method: 'verify',
@@ -20,6 +22,7 @@ class OtpController extends GetxController {
           'key': Globals.user.user.key,
           'otp': otpController.text
         }).then((value) async{
+      EasyLoading.dismiss();
       if (value.statusCode == 200) {
         Map<String, dynamic> myMap = jsonDecode(value.body);
         // print(myMap);

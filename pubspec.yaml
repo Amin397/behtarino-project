@@ -45,6 +45,7 @@ dependencies:
   grpc: ^3.0.2
   sqflite: ^2.0.2+1
   path_provider: ^2.0.9
+  flutter_easyloading: ^3.0.3
 
 
 

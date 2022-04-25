@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:my_note/Consts/name_routs.dart';
 import 'package:my_note/Globals/blocs.dart';
 import 'package:my_note/Utils/storage.dart';
-
-import '../../../DataBase/event_database.dart';
 import '../Model/day_calendar_model.dart';
 import '../View/Widgets/show_add_alarm_alert.dart';
 
@@ -91,6 +89,10 @@ class CalendarController extends GetxController {
         }
       case 1:
         {
+
+          Get.toNamed(NameRouts.history , arguments: {
+            'list': dayList
+          });
           break;
         }
       default:
@@ -125,21 +127,13 @@ class CalendarController extends GetxController {
     eventList.removeWhere((element) =>
         element.time!.split(':').first == item.time!.split(':').first);
 
-
     await StorageUtils.cleanEvent();
-    // print(eventList[0].time);
-    // print(item.time);
-
-    print(eventList.length);
-    //
-    if(eventList.isNotEmpty){
+    if (eventList.isNotEmpty) {
       eventList.forEach((element) {
         StorageUtils.setEvent(model: element);
       });
     }
-
     eventSelect(false);
-
     update();
   }
 }

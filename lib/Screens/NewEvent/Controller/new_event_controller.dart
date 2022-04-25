@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:my_note/GPRS/calendar.pb.dart';
 import 'package:my_note/GPRS/calendar.pbgrpc.dart';
@@ -138,6 +139,8 @@ class NewEventController extends GetxController {
   }
 
   void submitNewEvent() async {
+    EasyLoading.show();
+
     String startTime = DateTime(
             Globals.time.now.year,
             Globals.time.now.month,
@@ -182,6 +185,7 @@ class NewEventController extends GetxController {
         }).then((value) async {
       print(value.body);
 
+      EasyLoading.dismiss();
       if(value.statusCode == 200){
         DayCalendarModel model = DayCalendarModel(
           time: hourList
