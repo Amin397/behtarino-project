@@ -18,6 +18,7 @@ class NewEventScreen extends StatelessWidget {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: SizedBox(
           height: Get.height,
@@ -53,6 +54,9 @@ class NewEventScreen extends StatelessWidget {
                         radius: radiusAll6,
                         textSize: 18.0,
                         shadow: ViewUtils.shadow(),
+                        func: (){
+                          controller.submitNewEvent();
+                        }
                       ),
                     ],
                   ),
@@ -155,14 +159,7 @@ class NewEventScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _buildEventTime(),
-                  Flexible(
-                    flex: 1,
-                    child: Container(
-                      color: Colors.blue,
-                      height: double.maxFinite,
-                      width: double.maxFinite,
-                    ),
-                  ),
+                  _buildEventEndTime()
                 ],
               ),
             ),
@@ -258,7 +255,7 @@ class NewEventScreen extends StatelessWidget {
                         width: double.maxFinite,
                         child: PageView.builder(
                           scrollDirection: Axis.horizontal,
-                          // physics: const NeverScrollableScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           controller: pageController,
                           itemCount: list.length,
                           itemBuilder: (BuildContext context, int index) =>
@@ -302,6 +299,92 @@ class NewEventScreen extends StatelessWidget {
             fontSize: (item.isSelected.isTrue) ? 20.0 : 14.0,
             fontWeight: FontWeight.bold,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventEndTime() {
+    return Flexible(
+      flex: 1,
+      child: SizedBox(
+        height: double.maxFinite,
+        width: double.maxFinite,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'مدت زمان رویداد (دقیقه)',
+              style: TextStyle(
+                color: textColor,
+                fontSize: 16.0,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: Get.height * .023,
+                  horizontal: Get.width * .2,
+                ),
+                height: double.maxFinite,
+                width: double.maxFinite,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.blueAccent.withOpacity(.5),
+                    width: 2.0,
+                  ),
+                  borderRadius: radiusAll6,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4.0,
+                ),
+                child: Row(
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        controller.previous(
+                          list: controller.eventMinuteList,
+                          pageController: controller.eventMinutePageController,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
+                        size: 18.0,
+                      ),
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        height: double.maxFinite,
+                        width: double.maxFinite,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: controller.eventMinutePageController,
+                          itemCount: controller.eventMinuteList.length,
+                          itemBuilder: (BuildContext context, int index) =>
+                              _buildTimeNumber(
+                                item: controller.eventMinuteList[index],
+                              ),
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: (){
+                        controller.next(
+                          list: controller.eventMinuteList,
+                          pageController: controller.eventMinutePageController,
+                        );
+                      },
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 18.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

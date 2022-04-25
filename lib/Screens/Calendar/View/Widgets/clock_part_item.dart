@@ -1,7 +1,10 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:my_note/Consts/colors.dart';
 import 'package:my_note/Consts/edge_insets.dart';
 import 'package:my_note/Screens/Calendar/Controller/calendar_controller.dart';
+import 'package:my_note/Utils/view_utils.dart';
 
 import '../../../../Globals/blocs.dart';
 import '../../Model/day_calendar_model.dart';
@@ -18,8 +21,8 @@ class ClockPartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onLongPress: (){
-        controller.showAlertForAddAlarm(dayCalendar:item);
+      onLongPress: () {
+        controller.showAlertForAddAlarm(dayCalendar: item);
       },
       child: Container(
         height: Get.height * .3,
@@ -74,23 +77,40 @@ class ClockPartItem extends StatelessWidget {
   }
 
   Widget _buildMinuetsPart() {
+    bool hasEvent = false;
+
+    hasEvent = (item.alarms is EventModel);
+
     return Expanded(
-      child: SizedBox(
-        height: double.maxFinite,
-        width: double.maxFinite,
-        child: ListView.builder(
-          itemCount: 59,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return StreamBuilder(
-              stream: Globals.time.getStream,
-              builder: (c, b) {
-                return _buildMinuteItem(
-                  index: index,
-                );
-              },
-            );
-          },
+      child: GetBuilder(
+        init: controller,
+        builder: (ctx) => Stack(
+          children: [
+            SizedBox(
+              height: double.maxFinite,
+              width: double.maxFinite,
+              child: ListView.builder(
+                itemCount: 59,
+                physics: const NeverScrollableScrollPhysics(),
+                itemBuilder: (BuildContext context, int index) {
+                  return StreamBuilder(
+                    stream: Globals.time.getStream,
+                    builder: (c, b) {
+                      return _buildMinuteItem(
+                        index: index,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            (hasEvent)
+                ? Align(
+                    alignment: Alignment.topCenter,
+                    child: _buildEvent(),
+                  )
+                : const SizedBox(),
+          ],
         ),
       ),
     );
@@ -154,6 +174,142 @@ class ClockPartItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEvent() {
+    return GestureDetector(
+      onLongPress: () {
+        controller.eventSelect(true);
+      },
+      child: Obx(()=>AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: Get.width,
+        height: Get.height * .08,
+        decoration: BoxDecoration(
+          color: (controller.eventSelect.isTrue)
+              ? Colors.red.shade800
+              : eventColor,
+          borderRadius: const BorderRadius.horizontal(
+            right: Radius.circular(12.0),
+          ),
+          boxShadow: ViewUtils.shadow(),
+        ),
+        child: (controller.eventSelect.isTrue)
+            ? Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                controller.eventSelect(false);
+              },
+              icon: const Icon(
+                Icons.clear,
+                color: Colors.white,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                controller.deleteEvent(item:item);
+              },
+              icon: const Icon(
+                Icons.delete_forever,
+                color: Colors.white,
+              ),
+            ),
+            Expanded(
+              child: SizedBox(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Column(
+                  children: [
+                    Flexible(
+                      flex: 1,
+                      child: SizedBox(
+                        height: double.maxFinite,
+                        width: double.maxFinite,
+                        child: Center(
+                          child: AutoSizeText(
+                            item.alarms!.name!,
+                            maxLines: 1,
+                            maxFontSize: 18.0,
+                            minFontSize: 12.0,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: SizedBox(
+                        height: double.maxFinite,
+                        width: double.maxFinite,
+                        child: Center(
+                          child: AutoSizeText(
+                            '${item.alarms!.start!.hour}:${item.alarms!.start!.minute} تا ${item.alarms!.end!.hour}:${item.alarms!.end!.minute}',
+                            maxLines: 1,
+                            maxFontSize: 18.0,
+                            minFontSize: 12.0,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+
+          ],
+        )
+            : Column(
+          children: [
+            Flexible(
+              flex: 1,
+              child: SizedBox(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Center(
+                  child: AutoSizeText(
+                    item.alarms!.name!,
+                    maxLines: 1,
+                    maxFontSize: 18.0,
+                    minFontSize: 12.0,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: SizedBox(
+                height: double.maxFinite,
+                width: double.maxFinite,
+                child: Center(
+                  child: AutoSizeText(
+                    '${item.alarms!.start!.hour}:${item.alarms!.start!.minute} تا ${item.alarms!.end!.hour}:${item.alarms!.end!.minute}',
+                    maxLines: 1,
+                    maxFontSize: 18.0,
+                    minFontSize: 12.0,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      )),
     );
   }
 }

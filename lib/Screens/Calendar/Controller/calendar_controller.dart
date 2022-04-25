@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_note/Consts/name_routs.dart';
 import 'package:my_note/Globals/blocs.dart';
+import 'package:my_note/Utils/storage.dart';
 
+import '../../../DataBase/event_database.dart';
 import '../Model/day_calendar_model.dart';
 import '../View/Widgets/show_add_alarm_alert.dart';
 
@@ -36,6 +38,8 @@ class CalendarController extends GetxController {
     DayCalendarModel(time: '23:00'),
   ];
 
+  RxBool eventSelect = false.obs;
+
   @override
   void onInit() {
     Globals.time.updateTime();
@@ -43,6 +47,7 @@ class CalendarController extends GetxController {
       initialScrollOffset: 0.0,
     );
     goToThisTime();
+    amin();
     super.onInit();
   }
 
@@ -72,21 +77,69 @@ class CalendarController extends GetxController {
       },
     );
 
+    switch (result['id']) {
+      case 0:
+        {
+          var result = await Get.toNamed(NameRouts.newEvent, arguments: {
+            'item': dayCalendar,
+          });
 
-    switch(result['id']){
-      case 0:{
-        Get.toNamed(NameRouts.newEvent , arguments: {
-          'item':dayCalendar,
-        });
-        break;
-      }
-      case 1:{
-        print('shadi');
-        break;
-      }
-      default:{
+          if (result is bool) {
+            amin();
+          }
+          break;
+        }
+      case 1:
+        {
+          break;
+        }
+      default:
+        {}
+    }
+  }
 
+  void amin() async {
+    List<DayCalendarModel> eventList = [];
+
+    eventList = await StorageUtils.getEvent();
+
+    if (eventList.isNotEmpty) {
+      for (var o in eventList) {
+        print(o.time);
+        dayList
+            .singleWhere((element) =>
+                element.time!.split(':').first == o.time!.split(':').first)
+            .alarms = o.alarms;
       }
     }
+
+    update();
+  }
+
+  void deleteEvent({required DayCalendarModel item}) async {
+    List<DayCalendarModel> eventList = [];
+
+    eventList = await StorageUtils.getEvent();
+
+    dayList[dayList.indexOf(item)].alarms = null;
+    eventList.removeWhere((element) =>
+        element.time!.split(':').first == item.time!.split(':').first);
+
+
+    await StorageUtils.cleanEvent();
+    // print(eventList[0].time);
+    // print(item.time);
+
+    print(eventList.length);
+    //
+    if(eventList.isNotEmpty){
+      eventList.forEach((element) {
+        StorageUtils.setEvent(model: element);
+      });
+    }
+
+    eventSelect(false);
+
+    update();
   }
 }
